@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function BadgerLandingScreen(props) {
+
+    const navigation = useNavigation();
+    
     return <View style={styles.container}>
         <Text style={{fontSize: 24, marginTop: -100}}>Welcome to BadgerChat!</Text>
         <Text>Navigate to a chatroom via the drawer to get started.</Text>
