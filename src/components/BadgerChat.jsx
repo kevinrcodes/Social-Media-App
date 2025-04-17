@@ -68,6 +68,7 @@ export default function App() {
   }
 
   function handleSignup(username, pin) {
+    console.log("Signing up: " + username + " with pin " + pin);
     // basically do an API call, check the status
     fetch("https://cs571api.cs.wisc.edu/rest/s25/hw9/register", {
       method: "POST",

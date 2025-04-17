@@ -17,31 +17,44 @@ function BadgerChatroomScreen(props) {
     const [user, setUser] = useState("");
 
 
-    useEffect(() => {
-        setRefreshing(true);
-        // get the messages from the server
-        fetch(`https://cs571api.cs.wisc.edu/rest/s25/hw9/messages?chatroom=${props.name}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CS571-ID": "bid_26fc3560c8ebe8fef8aa98f5c388075445f56b265e2a8538acaf9c44dd10b451"
-            }
-        })
-        .then(response => {
+    const fetchMessages = async () => {
+        console.log("room: " + props.chatroomName);
+        try {
+            const response = await fetch(`https://cs571api.cs.wisc.edu/rest/s25/hw9/messages?chatroom=${props.chatroomName}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CS571-ID": "bid_26fc3560c8ebe8fef8aa98f5c388075445f56b265e2a8538acaf9c44dd10b451"
+                }
+            });
+            // no messages are being fetched
+            console.log("Data adsfs: " + JSON.stringify(response.json(), null, 2));
+
             if (!response.ok) {
-                throw new Error(response.json().msg);
+                const errorData = await response.json();
+                throw new Error(errorData.msg);
             }
-            return response.json();
-        })
-        .then(data => {
+
+            const data = await response.json();
             setMessages(data.messages);
-        })
-        .finally(() => {
-            setRefreshing(false);
-        });
-    }, [refreshing])
+        } catch (error) {
+            console.error("Error fetching messages 1:", error, props.chatroomName);
+        }
+    };
+
+    useEffect(() => {
+        console.log("useEffect run with name: " + props.chatroomName);
+        if (props.chatroomName !== undefined) fetchMessages();
+    }, [props.chatroomName, refreshing]); // Only run when the chatroom name changes
+    
+    // Function to refresh messages manually
+    const handleRefresh = () => {
+        console.log("Refreshing...");
+        fetchMessages(); // Call the fetchMessages function
+    };
 
     useEffect(() => { // get the user and the token
+        console.log("useEffect run with name: " + props.chatroomName);
         const getCurrentUser = async () => {
             const token = await SecureStore.getItemAsync("token");
             setToken(token);
@@ -56,7 +69,7 @@ function BadgerChatroomScreen(props) {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Data: " + JSON.stringify(data, null, 2));
+                    console.log("Data mnmn,: " + JSON.stringify(data, null, 2));
                     if (data.isLoggedIn) {
                         setUser(data.user.username);
                     }
@@ -69,7 +82,7 @@ function BadgerChatroomScreen(props) {
 
     const handlePost = () => {
         console.log("Handling post...");
-        fetch(`https://cs571api.cs.wisc.edu/rest/s25/hw9/messages?chatroom=${props.name}`, {
+        fetch(`https://cs571api.cs.wisc.edu/rest/s25/hw9/messages?chatroom=${props.chatroomName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -130,7 +143,7 @@ function BadgerChatroomScreen(props) {
         )}
         keyExtractor={item => item.id.toString()}
         refreshing={refreshing}
-        onRefresh={() => setRefreshing(true)}
+        onRefresh={handleRefresh}
     />
 
     <View style={{ margin: 10, height: 60 }}>
