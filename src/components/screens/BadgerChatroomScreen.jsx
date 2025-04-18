@@ -27,15 +27,14 @@ function BadgerChatroomScreen(props) {
                     "X-CS571-ID": "bid_26fc3560c8ebe8fef8aa98f5c388075445f56b265e2a8538acaf9c44dd10b451"
                 }
             });
-            // no messages are being fetched
-            console.log("Data adsfs: " + JSON.stringify(response.json(), null, 2));
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.msg);
-            }
 
             const data = await response.json();
+            // no messages are being fetched
+            console.log("Data adsfs: " + JSON.stringify(data, null, 2));
+
+            if (!response.ok) {
+                throw new Error(data.msg);
+            }
             setMessages(data.messages);
         } catch (error) {
             console.error("Error fetching messages 1:", error, props.chatroomName);
@@ -87,7 +86,7 @@ function BadgerChatroomScreen(props) {
             headers: {
                 "Content-Type": "application/json",
                 "X-CS571-ID": "bid_26fc3560c8ebe8fef8aa98f5c388075445f56b265e2a8538acaf9c44dd10b451",
-                "Authorization": "Bearer " + token
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
                 title: modalTitle,
@@ -96,7 +95,7 @@ function BadgerChatroomScreen(props) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(response.json().msg);
+                throw new Error(data.msg);
             }
             return response.json();
         })
