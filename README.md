@@ -1,4 +1,4 @@
-# BadgerChat Mobile App
+# Social Media Mobile App
 
 A modern, full-stack social media mobile application built with React Native and Expo that enables users to connect, share, and engage in real-time conversations across multiple chatrooms, all from their mobile devices.
 
